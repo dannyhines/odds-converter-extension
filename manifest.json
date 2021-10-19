@@ -1,0 +1,26 @@
+{
+    "name": "Odds to Probability Text Changer",
+    "short_name": "Odds Converter",
+    "description": "Whenever American odds appear on a webpage, this extension will also show the probability as a percentage.",
+    "version": "1.0",
+    "manifest_version": 3,
+    "author": "Danny Hines",
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*/*"
+            ],
+            "all_frames": true,
+            "js": [
+                "content_script.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "icons": {
+        "16": "/images/converter-icon16.png",
+        "32": "/images/converter-icon32.png",
+        "48": "/images/converter-icon48.png",
+        "128": "/images/converter-icon128.png"
+    }
+}
