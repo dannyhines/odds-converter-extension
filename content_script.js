@@ -1,7 +1,3 @@
-const text = document.querySelectorAll(
-  "h1, h2, h3, h4, h5, p, li, td, caption, span, a, div"
-);
-
 // Replacer function that takes in "+140", "-350", etc.
 // Returns the replacement string eg. "+140 (41.7%)"
 function replacer(match) {
@@ -15,8 +11,33 @@ function replacer(match) {
   return match + " (" + replacement + "%)";
 }
 
-// Replace every text element using the replacer function
-for (let i = 0; i < text.length; i++) {
-  let regex = /([+-])(\d\d\d+)/g;
-  text[i].innerHTML = text[i].innerHTML.replace(regex, replacer);
+function replaceAllText(active) {
+  const text = document.querySelectorAll(
+    "h1, h2, h3, h4, h5, p, li, td, caption, span, a, div"
+  );
+  // Replace every text element on the page
+  for (let i = 0; i < text.length; i++) {
+    let regex = active ? /([+-])(\d\d\d+)/g : / \(\d*\.\d\%\)/g;
+    text[i].innerHTML = text[i].innerHTML.replace(
+      regex,
+      active ? replacer : ""
+    );
+  }
 }
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === "activate") {
+    replaceAllText(true);
+    sendResponse({ isActive: true });
+  } else {
+    replaceAllText(false);
+    sendResponse({ isActive: false });
+  }
+  return true;
+});
+
+chrome.storage.sync.get(["isActive"], function (result) {
+  if (result && result.isActive) {
+    replaceAllText(true);
+  }
+});
