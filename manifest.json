@@ -2,7 +2,7 @@
     "name": "Odds to Probability Text Changer",
     "short_name": "Odds Converter",
     "description": "Click this extension to convert all American odds on a webpage to implied probability.",
-    "version": "2.0",
+    "version": "3.1",
     "manifest_version": 3,
     "author": "Danny Hines",
     "action": {
