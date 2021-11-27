@@ -9,7 +9,6 @@
         "default_title": "Click to toggle odds conversion"
     },
     "permissions": [
-        "activeTab",
         "storage"
     ],
     "background": {
