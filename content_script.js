@@ -26,18 +26,27 @@ function replaceAllText(active) {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.action === "activate") {
-    replaceAllText(true);
-    sendResponse({ isActive: true });
-  } else {
-    replaceAllText(false);
-    sendResponse({ isActive: false });
-  }
+  const activate = request.action === "activate";
+  replaceAllText(activate);
+  sendResponse({ isActive: activate });
   return true;
 });
 
-chrome.storage.sync.get(["isActive"], function (result) {
-  if (result && result.isActive) {
-    replaceAllText(true);
-  }
-});
+function onPageLoaded() {
+  chrome.storage.sync.get(["isActive"], function (result) {
+    if (result && result.isActive) {
+      replaceAllText(true);
+    }
+  });
+}
+
+// Wait for the DOM to fully load before changing text
+
+const delayedLoad = () => setTimeout(onPageLoaded, 1000);
+
+if (document.readyState === "complete") {
+  console.log("not complete");
+  document.addEventListener("load", delayedLoad);
+} else {
+  delayedLoad();
+}
