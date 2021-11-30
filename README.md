@@ -2,7 +2,7 @@
 
 View it on the Chrome Web Store: https://chrome.google.com/webstore/detail/odds-to-probability-text/nofjpbibnnkinmfndoknlbkchbecgbkb
 
-This is a simple extension used to display the implied probability whenever American odds appear on your webpage. The project is incredibly lightweight (about ~20 lines of code) and only scans for text after the page has loaded.
+This is a simple, lightweight Chrome extension that scans the webpage for instances of American odds (-130, +140, etc), and converts it to implied probability as a percentage. Click the extension icon to toggle it on and off.
 
 ## Example
 
