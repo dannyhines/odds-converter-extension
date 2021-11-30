@@ -11,17 +11,29 @@ function replacer(match) {
   return match + " (" + replacement + "%)";
 }
 
-function replaceAllText(active) {
-  const text = document.querySelectorAll(
-    "h1, h2, h3, h4, h5, p, li, td, caption, span, a, div"
+function textNodeInnerHTML(textNode, active) {
+  let regex = active ? /([+-])(\d\d\d+)/g : / \(\d*\.\d\%\)/g;
+
+  var div = document.createElement("div");
+  textNode.parentNode.insertBefore(div, textNode);
+  div.insertAdjacentHTML(
+    "afterend",
+    textNode.data.replace(regex, active ? replacer : "")
   );
+  div.remove();
+  textNode.remove();
+}
+
+function replaceAllText(active) {
   // Replace every text element on the page
-  for (let i = 0; i < text.length; i++) {
-    let regex = active ? /([+-])(\d\d\d+)/g : / \(\d*\.\d\%\)/g;
-    text[i].innerHTML = text[i].innerHTML.replace(
-      regex,
-      active ? replacer : ""
-    );
+  let body = document.getElementsByTagName("body")[0];
+  let textNodes = [...body.querySelectorAll("*")]
+    .map((l) => [...l.childNodes])
+    .flat()
+    .filter((l) => l.nodeType === 3);
+
+  for (let i = 0; i < textNodes.length; i++) {
+    textNodeInnerHTML(textNodes[i], active);
   }
 }
 
@@ -40,13 +52,8 @@ function onPageLoaded() {
   });
 }
 
-// Wait for the DOM to fully load before changing text
-
-const delayedLoad = () => setTimeout(onPageLoaded, 1000);
-
 if (document.readyState === "complete") {
-  console.log("not complete");
-  document.addEventListener("load", delayedLoad);
+  document.addEventListener("load", onPageLoaded);
 } else {
-  delayedLoad();
+  onPageLoaded();
 }
