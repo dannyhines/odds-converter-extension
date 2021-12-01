@@ -13,7 +13,6 @@ function replacer(match) {
 
 function textNodeInnerHTML(textNode, active) {
   let regex = active ? /([+-])(\d\d\d+)/g : / \(\d*\.\d\%\)/g;
-
   var div = document.createElement("div");
   textNode.parentNode.insertBefore(div, textNode);
   div.insertAdjacentHTML(
