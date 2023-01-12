@@ -5,9 +5,12 @@
 ![GitHub issues](https://img.shields.io/github/issues/danielchines/odds-converter-extension)
 ![GitHub](https://img.shields.io/github/license/danielchines/odds-converter-extension)
 
-View it on the Chrome Web Store: https://chrome.google.com/webstore/detail/odds-to-probability-text/nofjpbibnnkinmfndoknlbkchbecgbkb
+
+View it on the [Chrome Web Store](https://chrome.google.com/webstore/detail/odds-to-probability-text/nofjpbibnnkinmfndoknlbkchbecgbkb)
 
 This is a simple, lightweight Chrome extension that scans the webpage for instances of American odds (-130, +140, etc), and converts it to implied probability as a percentage. Click the extension icon to toggle it on and off.
+
+> For more on implied probability and gambling odds, check out my [blog post](https://www.dannyhines.io/blog/betting-odds-extension).
 
 ## Example
 
