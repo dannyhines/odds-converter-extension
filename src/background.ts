@@ -81,7 +81,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 chrome.tabs.onRemoved.addListener((tabId) => frameStatuses.delete(tabId));
 
 function updateBadge(tabId: number, active: boolean, count: number): void {
-  const text = active ? (count > 0 ? String(Math.min(count, 99)) : "ON") : "OFF";
+  const text = active ? "ON" : "OFF";
   chrome.action.setBadgeText({ tabId, text });
   chrome.action.setBadgeBackgroundColor({ tabId, color: active ? "#157347" : "#6b7280" });
   chrome.action.setTitle({
