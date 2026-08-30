@@ -15,7 +15,7 @@ describe("popup initialization", () => {
         <p id="status"></p><input id="calculator-input"><output id="calculator-output"></output>
       </main>`;
 
-    let tabsCallback!: (tabs: Array<{ id: number; url: string }>) => void;
+    let tabsCallback!: (tabs: Array<{ id: number }>) => void;
     let syncCallback!: (values: Record<string, unknown>) => void;
     let localCallback!: (values: Record<string, unknown>) => void;
     const chromeMock = {
@@ -35,7 +35,9 @@ describe("popup initialization", () => {
       },
       runtime: {
         lastError: undefined,
-        sendMessage: vi.fn((_message, callback) => callback(undefined)),
+        sendMessage: vi.fn((_message, callback) =>
+          callback({ active: true, convertedCount: 2, hostname: "sports.example" }),
+        ),
       },
     };
     vi.stubGlobal("chrome", chromeMock);
@@ -43,7 +45,7 @@ describe("popup initialization", () => {
     await import("../src/popup");
     expect((document.getElementById("global-enabled") as HTMLInputElement).disabled).toBe(true);
 
-    tabsCallback([{ id: 7, url: "https://sports.example/live" }]);
+    tabsCallback([{ id: 7 }]);
     syncCallback({ [SETTINGS_KEY]: { ...DEFAULT_SETTINGS, enabled: true } });
     localCallback({ [SITE_RULES_KEY]: {} });
 

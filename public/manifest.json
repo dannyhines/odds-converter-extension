@@ -8,11 +8,15 @@
     "author": "Danny Hines",
     "action": {
         "default_title": "Odds Converter",
-        "default_popup": "popup.html"
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "/images/converter-icon16.png",
+            "24": "/images/converter-icon24.png",
+            "32": "/images/converter-icon32.png"
+        }
     },
     "permissions": [
-        "storage",
-        "activeTab"
+        "storage"
     ],
     "background": {
         "service_worker": "js/background.js"

@@ -38,7 +38,6 @@ function initialize(): void {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const tab = tabs[0];
     activeTabId = tab?.id;
-    hostname = parseHostname(tab?.url);
     chrome.storage.sync.get([SETTINGS_KEY, "isActive"], (syncValues) => {
       settings = sanitizeSettings(syncValues[SETTINGS_KEY], syncValues.isActive);
       chrome.storage.local.get([SITE_RULES_KEY], (localValues) => {
@@ -140,7 +139,7 @@ function requestStatus(): void {
     { type: "get-tab-status", tabId: activeTabId } satisfies ExtensionMessage,
     (aggregate?: EngineStatus) => {
       if (aggregate) {
-        showEngineStatus(aggregate);
+        applyEngineStatus(aggregate);
         return;
       }
       chrome.tabs.sendMessage(
@@ -149,11 +148,22 @@ function requestStatus(): void {
         (response?: EngineStatus) => {
           if (chrome.runtime.lastError || !response) {
             showStatus("Reload the page to start converting odds", "muted");
-          } else showEngineStatus(response);
+          } else applyEngineStatus(response);
         },
       );
     },
   );
+}
+
+function applyEngineStatus(engineStatus: EngineStatus): void {
+  const nextHostname = isSafeHostname(engineStatus.hostname)
+    ? engineStatus.hostname.toLowerCase()
+    : "";
+  if (hostname !== nextHostname) {
+    hostname = nextHostname;
+    render();
+  }
+  showEngineStatus(engineStatus);
 }
 
 function showEngineStatus(engineStatus: EngineStatus): void {
@@ -194,16 +204,6 @@ function setControlsDisabled(disabled: boolean): void {
   controls.forEach((control) => {
     control.disabled = disabled;
   });
-}
-
-function parseHostname(url?: string): string {
-  if (!url) return "";
-  try {
-    const parsed = new URL(url);
-    return isSafeHostname(parsed.hostname) ? parsed.hostname.toLowerCase() : "";
-  } catch {
-    return "";
-  }
 }
 
 function byId<T extends HTMLElement>(id: string): T {

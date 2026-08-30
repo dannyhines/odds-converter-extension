@@ -1,7 +1,13 @@
 import { sanitizeSettings, SETTINGS_KEY } from "./settings";
 import { ExtensionMessage } from "./types";
 
-const frameStatuses = new Map<number, Map<number, { active: boolean; count: number }>>();
+interface FrameStatus {
+  active: boolean;
+  count: number;
+  hostname: string;
+}
+
+const frameStatuses = new Map<number, Map<number, FrameStatus>>();
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.get([SETTINGS_KEY, "isActive"], (values) => {
@@ -18,6 +24,7 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendRes
     tabStatuses.set(sender.frameId ?? 0, {
       active: message.status.active,
       count: message.status.convertedCount,
+      hostname: message.status.hostname,
     });
     frameStatuses.set(sender.tab.id, tabStatuses);
     const active = [...tabStatuses.values()].some((status) => status.active);
@@ -38,13 +45,14 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendRes
     return false;
   }
   if (message?.type === "get-tab-status") {
-    const statuses = [...(frameStatuses.get(message.tabId)?.values() ?? [])];
+    const tabStatuses = frameStatuses.get(message.tabId);
+    const statuses = [...(tabStatuses?.values() ?? [])];
     if (statuses.length === 0) sendResponse(undefined);
     else
       sendResponse({
         active: statuses.some((status) => status.active),
         convertedCount: statuses.reduce((total, status) => total + status.count, 0),
-        hostname: "",
+        hostname: tabStatuses?.get(0)?.hostname ?? statuses.find((status) => status.hostname)?.hostname ?? "",
       });
     return false;
   }
