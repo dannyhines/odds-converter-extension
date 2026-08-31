@@ -38,14 +38,19 @@ describe("American odds conversion", () => {
 
   it("converts multiple valid odds while preserving surrounding text", () => {
     expect(convertText("NYK +140 / LAL −350", activeSettings)).toMatchObject({
-      text: "NYK +140 (41.7% implied) / LAL −350 (77.8% implied)",
+      text: "NYK +140 (42% implied) / LAL −350 (78% implied)",
       matchCount: 2,
     });
   });
 
-  it("supports replacement mode and configurable precision", () => {
-    const settings = { ...activeSettings, displayMode: "replace" as const, precision: 2 };
-    expect(convertText("Spread -110", settings).text).toBe("Spread 52.38%");
+  it("supports compact append mode with fixed one-decimal precision", () => {
+    const settings = { ...activeSettings, displayMode: "append-compact" as const };
+    expect(convertText("Moneyline +140", settings).text).toBe("Moneyline +140 (41.7%)");
+  });
+
+  it("supports replacement mode with fixed one-decimal precision", () => {
+    const settings = { ...activeSettings, displayMode: "replace" as const };
+    expect(convertText("Spread -110", settings).text).toBe("Spread 52.4%");
   });
 
   it.each([
@@ -65,8 +70,9 @@ describe("American odds conversion", () => {
   });
 
   it("does not stack an annotation that is already present", () => {
-    const source = "+140 (41.7% implied)";
-    expect(convertText(source, activeSettings)).toMatchObject({ text: source, matchCount: 0 });
+    for (const source of ["+140 (42% implied)", "+140 (41.7%)"]) {
+      expect(convertText(source, activeSettings)).toMatchObject({ text: source, matchCount: 0 });
+    }
   });
 
   it("honors the configurable maximum", () => {
@@ -76,8 +82,8 @@ describe("American odds conversion", () => {
 
   it("accepts sentence punctuation and compact opposing odds", () => {
     expect(convertText("Odds +140. Next +150, total +160: +110/-110", activeSettings).text).toBe(
-      "Odds +140 (41.7% implied). Next +150 (40.0% implied), total +160 (38.5% implied): " +
-        "+110 (47.6% implied)/-110 (52.4% implied)",
+      "Odds +140 (42% implied). Next +150 (40% implied), total +160 (38% implied): " +
+        "+110 (48% implied)/-110 (52% implied)",
     );
   });
 
@@ -97,7 +103,7 @@ describe("live DOM controller", () => {
     const controller = startController();
 
     expect(document.getElementById("line")!.firstChild).toBe(textNode);
-    expect(textNode.data).toBe("<img src=x> Knicks +140 (41.7% implied)");
+    expect(textNode.data).toBe("<img src=x> Knicks +140 (42% implied)");
     expect(document.querySelector("img")).toBeNull();
 
     controller.stop();
@@ -116,8 +122,8 @@ describe("live DOM controller", () => {
     feed.append(row);
     await settleMutations();
 
-    expect(opening.data).toBe("Moved to +125 (44.4% implied)");
-    expect(row.textContent).toBe("New market -150 (60.0% implied)");
+    expect(opening.data).toBe("Moved to +125 (44% implied)");
+    expect(row.textContent).toBe("New market -150 (60% implied)");
     expect(controller.getStatus().convertedCount).toBe(2);
   });
 
@@ -126,7 +132,7 @@ describe("live DOM controller", () => {
     startController();
     await settleMutations();
     await settleMutations();
-    expect(document.body.textContent).toBe("Team +140 (41.7% implied)");
+    expect(document.body.textContent).toBe("Team +140 (42% implied)");
   });
 
   it("reconciles partial edits to decorated live text", async () => {
@@ -136,11 +142,11 @@ describe("live DOM controller", () => {
 
     node.replaceData(5, 4, "+150");
     await settleMutations();
-    expect(node.data).toBe("Home +150 (40.0% implied)");
+    expect(node.data).toBe("Home +150 (40% implied)");
 
     node.appendData(" / Away -110");
     await settleMutations();
-    expect(node.data).toBe("Home +150 (40.0% implied) / Away -110 (52.4% implied)");
+    expect(node.data).toBe("Home +150 (40% implied) / Away -110 (52% implied)");
     expect(controller.getStatus().convertedCount).toBe(2);
 
     controller.stop();
@@ -153,7 +159,7 @@ describe("live DOM controller", () => {
     const node = document.body.firstChild as Text;
     node.data = node.data.replace("+140", "+150").replace("-110", "-120");
     await settleMutations();
-    expect(node.data).toBe("Home +150 (40.0% implied) / Away -120 (54.5% implied)");
+    expect(node.data).toBe("Home +150 (40% implied) / Away -120 (55% implied)");
     expect(controller.getStatus().convertedCount).toBe(2);
   });
 
@@ -164,7 +170,7 @@ describe("live DOM controller", () => {
     node.data = `LIVE ${node.data.split("+900").join("+1000")}`;
     await settleMutations();
     expect(node.data).toBe(
-      "LIVE A +1000 (9.1% implied) / B +1000 (9.1% implied)",
+      "LIVE A +1000 (9% implied) / B +1000 (9% implied)",
     );
     expect(controller.getStatus().convertedCount).toBe(2);
   });
@@ -175,7 +181,7 @@ describe("live DOM controller", () => {
     const node = document.body.firstChild as Text;
     node.data = node.data.replace("+140", "+150");
     await settleMutations();
-    expect(node.data).toBe("Forecast (41.7% implied), market +150 (40.0% implied)");
+    expect(node.data).toBe("Forecast (41.7% implied), market +150 (40% implied)");
     expect(controller.getStatus().convertedCount).toBe(1);
     controller.stop();
     expect(node.data).toBe("Forecast (41.7% implied), market +150");
@@ -209,11 +215,11 @@ describe("live DOM controller", () => {
     expect(controller.getStatus().convertedCount).toBe(500);
 
     rows.forEach((row) => {
-      (row.firstChild as Text).data = row.textContent!.replace("+110 (47.6% implied)", "+120");
+      (row.firstChild as Text).data = row.textContent!.replace("+110 (48% implied)", "+120");
     });
     await settleMutations();
     expect(controller.getStatus().convertedCount).toBe(500);
-    expect(rows[499].textContent).toContain("+120 (45.5% implied)");
+    expect(rows[499].textContent).toContain("+120 (45% implied)");
   });
 
   it("reports inactive after the controller is stopped", () => {
@@ -229,10 +235,10 @@ describe("live DOM controller", () => {
     controller.stop();
     controller.updateSettings(activeSettings);
     controller.start();
-    expect(document.body.textContent).toBe("Home +140 (41.7% implied)");
+    expect(document.body.textContent).toBe("Home +140 (42% implied)");
     (document.body.firstChild as Text).data = "Home +150";
     await settleMutations();
-    expect(document.body.textContent).toBe("Home +150 (40.0% implied)");
+    expect(document.body.textContent).toBe("Home +150 (40% implied)");
     expect(controller.getStatus()).toEqual({ active: true, convertedCount: 1 });
   });
 
@@ -249,7 +255,7 @@ describe("live DOM controller", () => {
     (row.firstChild as Text).data = "Market +120";
     document.body.append(row);
     await settleMutations();
-    expect(row.textContent).toBe("Market +120 (45.5% implied)");
+    expect(row.textContent).toBe("Market +120 (45% implied)");
     expect(controller.getStatus().convertedCount).toBe(1);
   });
 
@@ -265,8 +271,8 @@ describe("live DOM controller", () => {
   it("rerenders from source when display settings change", () => {
     document.body.textContent = "Team +140";
     const controller = startController();
-    controller.updateSettings({ ...activeSettings, displayMode: "replace", precision: 2 });
-    expect(document.body.textContent).toBe("Team 41.67%");
+    controller.updateSettings({ ...activeSettings, displayMode: "replace" });
+    expect(document.body.textContent).toBe("Team 41.7%");
   });
 
   it("skips code, editable, textbox, and ignored regions", () => {
@@ -279,7 +285,7 @@ describe("live DOM controller", () => {
     ].join("");
     startController();
     expect(document.body.textContent).toBe(
-      "code +140edit +140role +140ignore +140market +140 (41.7% implied)",
+      "code +140edit +140role +140ignore +140market +140 (42% implied)",
     );
   });
 
@@ -294,14 +300,14 @@ describe("live DOM controller", () => {
     ignored.removeAttribute("data-odds-converter-ignore");
     await settleMutations();
     expect(market.textContent).toBe("Market +140");
-    expect(ignored.textContent).toBe("Other -110 (52.4% implied)");
+    expect(ignored.textContent).toBe("Other -110 (52% implied)");
     expect(controller.getStatus().convertedCount).toBe(1);
   });
 
   it("honors a nested contenteditable=false boundary", () => {
     document.body.innerHTML = "<div contenteditable='true'><p contenteditable='false'>Market +140</p></div>";
     startController();
-    expect(document.querySelector("p")!.textContent).toBe("Market +140 (41.7% implied)");
+    expect(document.querySelector("p")!.textContent).toBe("Market +140 (42% implied)");
   });
 
   it("converts existing and newly added open shadow roots", async () => {
@@ -309,13 +315,13 @@ describe("live DOM controller", () => {
     firstHost.attachShadow({ mode: "open" }).textContent = "Shadow +120";
     document.body.append(firstHost);
     startController();
-    expect(firstHost.shadowRoot!.textContent).toBe("Shadow +120 (45.5% implied)");
+    expect(firstHost.shadowRoot!.textContent).toBe("Shadow +120 (45% implied)");
 
     const secondHost = document.createElement("div");
     secondHost.attachShadow({ mode: "open" }).textContent = "Live -120";
     document.body.append(secondHost);
     await settleMutations();
-    expect(secondHost.shadowRoot!.textContent).toBe("Live -120 (54.5% implied)");
+    expect(secondHost.shadowRoot!.textContent).toBe("Live -120 (55% implied)");
   });
 
   it("discovers an open shadow root attached to an existing host", async () => {
@@ -325,7 +331,7 @@ describe("live DOM controller", () => {
     startController();
     host.attachShadow({ mode: "open" }).textContent = "Late +125";
     await vi.advanceTimersByTimeAsync(4000);
-    expect(host.shadowRoot!.textContent).toBe("Late +125 (44.4% implied)");
+    expect(host.shadowRoot!.textContent).toBe("Late +125 (44% implied)");
   });
 
   it("stops observing a shadow tree after its host is removed", async () => {

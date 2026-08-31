@@ -7,10 +7,14 @@ import {
 } from "../src/settings";
 
 describe("settings validation", () => {
+  it("starts opt-in globally with live updates enabled", () => {
+    expect(DEFAULT_SETTINGS.enabled).toBe(false);
+    expect(DEFAULT_SETTINGS.liveUpdates).toBe(true);
+  });
+
   it("uses safe defaults for corrupt storage", () => {
     expect(sanitizeSettings({ enabled: "yes", precision: 99, maximumOdds: 42 })).toEqual({
       ...DEFAULT_SETTINGS,
-      precision: 3,
     });
   });
 
@@ -18,22 +22,25 @@ describe("settings validation", () => {
     expect(sanitizeSettings(undefined, true).enabled).toBe(true);
   });
 
-  it("clamps precision and accepts known options", () => {
+  it("accepts known options and ignores retired precision settings", () => {
     expect(
       sanitizeSettings({
         enabled: true,
         displayMode: "replace",
-        precision: -4,
+        precision: 3,
         liveUpdates: false,
         maximumOdds: 100000,
       }),
     ).toEqual({
       enabled: true,
       displayMode: "replace",
-      precision: 0,
       liveUpdates: false,
       maximumOdds: 100000,
     });
+  });
+
+  it("accepts the compact append format", () => {
+    expect(sanitizeSettings({ displayMode: "append-compact" }).displayMode).toBe("append-compact");
   });
 
   it("keeps valid local host rules and rejects malformed keys", () => {

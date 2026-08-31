@@ -7,13 +7,18 @@ describe("popup initialization", () => {
     document.body.innerHTML = `
       <main>
         <input id="global-enabled" type="checkbox"><input id="site-enabled" type="checkbox">
-        <button id="clear-site-rule"></button><div id="site-row"></div><span id="hostname"></span>
-        <select id="display-mode"><option value="append"></option><option value="replace"></option></select>
-        <select id="precision"><option value="1"></option></select>
+        <span id="hostname"></span><span id="sites-count"></span>
+        <div id="site-rules-list"></div><p id="empty-sites"></p>
+        <select id="display-mode">
+          <option value="append"></option><option value="append-compact"></option><option value="replace"></option>
+        </select>
         <input id="live-updates" type="checkbox">
         <select id="maximum-odds"><option value="10000"></option></select>
         <p id="status"></p><input id="calculator-input"><output id="calculator-output"></output>
-      </main>`;
+        <div id="settings-view"></div><div id="sites-view" hidden><button data-back></button></div>
+        <div id="calculator-view" hidden><button data-back></button></div>
+        <button id="sites-view-button"></button>
+      </main><button id="calculator-view-button"></button>`;
 
     let tabsCallback!: (tabs: Array<{ id: number }>) => void;
     let syncCallback!: (values: Record<string, unknown>) => void;
@@ -47,13 +52,36 @@ describe("popup initialization", () => {
 
     tabsCallback([{ id: 7 }]);
     syncCallback({ [SETTINGS_KEY]: { ...DEFAULT_SETTINGS, enabled: true } });
-    localCallback({ [SITE_RULES_KEY]: {} });
+    localCallback({ [SITE_RULES_KEY]: { "other.example": false, "sports.example": true } });
 
     const globalToggle = document.getElementById("global-enabled") as HTMLInputElement;
     const calculator = document.getElementById("calculator-input") as HTMLInputElement;
     expect(globalToggle.disabled).toBe(false);
     expect(globalToggle.checked).toBe(true);
     expect(document.getElementById("hostname")!.textContent).toBe("sports.example");
+    expect(document.getElementById("sites-count")!.textContent).toBe("2 saved →");
+    const savedSiteToggles = document.querySelectorAll<HTMLInputElement>("#site-rules-list input");
+    expect(savedSiteToggles).toHaveLength(2);
+    expect(savedSiteToggles[0].closest("label")?.textContent).toBe("other.example");
+    expect(savedSiteToggles[0].checked).toBe(false);
+    expect(savedSiteToggles[1].closest("label")?.textContent).toBe("sports.example");
+    expect(savedSiteToggles[1].checked).toBe(true);
+
+    savedSiteToggles[0].checked = true;
+    savedSiteToggles[0].dispatchEvent(new Event("change"));
+    expect(chromeMock.storage.local.set).toHaveBeenCalledWith(
+      { [SITE_RULES_KEY]: { "other.example": true, "sports.example": true } },
+      expect.any(Function),
+    );
+
+    document.getElementById("sites-view-button")!.click();
+    expect(document.getElementById("settings-view")!.hidden).toBe(true);
+    expect(document.getElementById("sites-view")!.hidden).toBe(false);
+    (document.querySelector("#sites-view [data-back]") as HTMLButtonElement).click();
+    expect(document.getElementById("settings-view")!.hidden).toBe(false);
+
+    document.getElementById("calculator-view-button")!.click();
+    expect(document.getElementById("calculator-view")!.hidden).toBe(false);
 
     calculator.value = "+140";
     calculator.dispatchEvent(new Event("input"));

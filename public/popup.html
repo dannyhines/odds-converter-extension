@@ -8,62 +8,116 @@
   </head>
   <body>
     <header>
-      <img src="images/converter-icon48.png" alt="" width="38" height="38" />
-      <div><h1>Odds Converter</h1><p>American odds, translated.</p></div>
+      <div class="brand">
+        <img src="images/converter-icon48.png" alt="" width="32" height="32" />
+        <div class="brand-copy">
+          <h1>Odds Converter</h1>
+          <p>Turns odds into implied probability</p>
+        </div>
+      </div>
     </header>
 
     <main aria-label="Odds Converter settings">
-      <section class="card primary-card" aria-labelledby="conversion-heading">
-        <h2 id="conversion-heading" class="sr-only">Conversion controls</h2>
-        <label class="toggle-row">
-          <span><strong>Enable globally</strong><small>Default for every website</small></span>
-          <input id="global-enabled" type="checkbox" role="switch" />
-        </label>
-        <div id="site-row" class="site-control">
-          <label class="toggle-row">
-            <span><strong>This site</strong><small id="hostname"></small></span>
+      <div id="settings-view">
+        <section class="card site-card" aria-labelledby="conversion-heading">
+          <h2 id="conversion-heading" class="sr-only">Current page</h2>
+          <label class="toggle-row primary-toggle">
+            <span
+              ><strong>Convert on this site</strong
+              ><small id="hostname">Checking current page…</small></span
+            >
             <input id="site-enabled" type="checkbox" role="switch" />
           </label>
-          <button id="clear-site-rule" class="link-button" type="button">Use global default</button>
+          <p id="status" class="sr-only" aria-live="polite">Checking this page…</p>
+        </section>
+
+        <section class="card preferences" aria-labelledby="display-heading">
+          <h2 id="display-heading" class="sr-only">Display settings</h2>
+          <label class="setting-row" for="display-mode">
+            <span>Format</span>
+            <select id="display-mode">
+              <option value="append">+140 (42% implied)</option>
+              <option value="append-compact">+140 (41.7%)</option>
+              <option value="replace">41.7%</option>
+            </select>
+          </label>
+          <label class="setting-row" for="maximum-odds">
+            <span>Largest odds</span>
+            <select id="maximum-odds">
+              <option value="1000">±1,000</option>
+              <option value="10000">±10,000</option>
+              <option value="100000">±100,000</option>
+            </select>
+          </label>
+          <label class="setting-row" for="live-updates">
+            <span><strong>Live updates</strong><small>Watch changing odds</small></span>
+            <input id="live-updates" type="checkbox" role="switch" />
+          </label>
+        </section>
+
+        <button id="sites-view-button" class="navigation-button" type="button">
+          <span><strong>Sites</strong><small>Manage saved websites and the default</small></span>
+          <span id="sites-count" class="navigation-value">0 saved →</span>
+        </button>
+      </div>
+
+      <section id="sites-view" class="secondary-view" aria-labelledby="sites-heading" hidden>
+        <div class="view-heading">
+          <button class="back-button" data-back type="button" aria-label="Back to settings">
+            ←
+          </button>
+          <div>
+            <h2 id="sites-heading">Sites</h2>
+            <p>Manage where conversion runs</p>
+          </div>
         </div>
-        <p id="status" class="status" aria-live="polite">Checking this page…</p>
+        <div class="card">
+          <label class="toggle-row primary-toggle">
+            <span><strong>Enable by default</strong><small>For all websites I visit</small></span>
+
+            <input id="global-enabled" type="checkbox" role="switch" />
+          </label>
+        </div>
+        <section class="card sites-card" aria-labelledby="saved-sites-heading">
+          <h3 id="saved-sites-heading">Saved sites</h3>
+          <div id="site-rules-list" class="sites-list"></div>
+          <p id="empty-sites" class="empty-sites">
+            Sites appear here after you use the current-site toggle.
+          </p>
+        </section>
       </section>
 
-      <section class="card settings-grid" aria-labelledby="display-heading">
-        <h2 id="display-heading">Display</h2>
-        <label>Format
-          <select id="display-mode">
-            <option value="append">+140 (41.7% implied)</option>
-            <option value="replace">41.7%</option>
-          </select>
-        </label>
-        <label>Decimal places
-          <select id="precision">
-            <option value="0">0</option><option value="1">1</option>
-            <option value="2">2</option><option value="3">3</option>
-          </select>
-        </label>
-        <label>Largest odds to recognize
-          <select id="maximum-odds">
-            <option value="1000">±1,000 (strict)</option>
-            <option value="10000">±10,000 (balanced)</option>
-            <option value="100000">±100,000 (longshots)</option>
-          </select>
-        </label>
-        <label class="toggle-row compact">
-          <span><strong>Live updates</strong><small>Watch changing and newly added odds</small></span>
-          <input id="live-updates" type="checkbox" role="switch" />
-        </label>
-      </section>
-
-      <section class="card calculator" aria-labelledby="calculator-heading">
-        <h2 id="calculator-heading">Quick calculator</h2>
-        <label for="calculator-input">American odds</label>
-        <input id="calculator-input" inputmode="text" placeholder="e.g. -110" autocomplete="off" />
-        <output id="calculator-output" for="calculator-input" aria-live="polite"></output>
+      <section
+        id="calculator-view"
+        class="secondary-view"
+        aria-labelledby="calculator-heading"
+        hidden
+      >
+        <div class="view-heading">
+          <button class="back-button" data-back type="button" aria-label="Back to settings">
+            ←
+          </button>
+          <div>
+            <h2 id="calculator-heading">Calculator</h2>
+            <p>American odds to implied probability</p>
+          </div>
+        </div>
+        <div class="card calculator">
+          <label for="calculator-input">American odds</label>
+          <input
+            id="calculator-input"
+            inputmode="text"
+            placeholder="e.g. -110"
+            autocomplete="off"
+          />
+          <output id="calculator-output" for="calculator-input" aria-live="polite"></output>
+        </div>
       </section>
     </main>
-    <footer>Probabilities include the sportsbook's vig. Bet responsibly.</footer>
+    <footer>
+      <button id="calculator-view-button" class="footer-link" type="button">Open calculator</button>
+      <p>Probabilities include the sportsbook's vig. Bet responsibly.</p>
+    </footer>
     <script src="js/popup.js"></script>
   </body>
 </html>

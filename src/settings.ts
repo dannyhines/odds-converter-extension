@@ -6,7 +6,6 @@ export const SITE_RULES_KEY = "siteRules";
 export const DEFAULT_SETTINGS: GlobalSettings = Object.freeze({
   enabled: false,
   displayMode: "append",
-  precision: 1,
   liveUpdates: true,
   maximumOdds: 10000,
 });
@@ -22,11 +21,10 @@ export function sanitizeSettings(value: unknown, legacyEnabled?: unknown): Globa
         : typeof legacyEnabled === "boolean"
           ? legacyEnabled
           : DEFAULT_SETTINGS.enabled,
-    displayMode: input.displayMode === "replace" ? "replace" : "append",
-    precision:
-      typeof input.precision === "number" && Number.isInteger(input.precision)
-        ? clamp(input.precision, 0, 3)
-        : DEFAULT_SETTINGS.precision,
+    displayMode:
+      input.displayMode === "replace" || input.displayMode === "append-compact"
+        ? input.displayMode
+        : "append",
     liveUpdates:
       typeof input.liveUpdates === "boolean"
         ? input.liveUpdates
@@ -71,8 +69,4 @@ export function isSafeHostname(hostname: string): boolean {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value));
 }
