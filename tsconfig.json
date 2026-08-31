@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2020",
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "rootDir": ".",
+    "outDir": "dist/js",
+    "noEmitOnError": true,
+    "lib": ["es2020", "dom", "dom.iterable"],
+    "types": ["chrome", "vitest/globals"]
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"]
+}
