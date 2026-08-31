@@ -10,9 +10,11 @@
     <header>
       <div class="brand">
         <img src="images/converter-icon48.png" alt="" width="32" height="32" />
-        <h1>Odds Converter</h1>
+        <div class="brand-copy">
+          <h1>Odds Converter</h1>
+          <p>Turns odds into implied probability</p>
+        </div>
       </div>
-      <button id="calculator-view-button" class="header-button" type="button">Calculator</button>
     </header>
 
     <main aria-label="Odds Converter settings">
@@ -112,7 +114,10 @@
         </div>
       </section>
     </main>
-    <footer>Probabilities include the sportsbook's vig. Bet responsibly.</footer>
+    <footer>
+      <button id="calculator-view-button" class="footer-link" type="button">Open calculator</button>
+      <p>Probabilities include the sportsbook's vig. Bet responsibly.</p>
+    </footer>
     <script src="js/popup.js"></script>
   </body>
 </html>

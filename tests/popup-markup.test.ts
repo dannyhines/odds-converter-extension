@@ -33,7 +33,8 @@ describe("popup layout", () => {
     expect(popup.getElementById("sites-view-button")).not.toBeNull();
     expect(popup.getElementById("site-rules-list")).not.toBeNull();
     expect(popup.getElementById("calculator-view-button")).not.toBeNull();
-    expect(popup.querySelector("header p")).toBeNull();
+    expect(popup.querySelector("header p")?.textContent).toBe("Turns odds into implied probability");
+    expect(popup.querySelector("footer > #calculator-view-button")).not.toBeNull();
     expect(popup.getElementById("clear-site-rule")).toBeNull();
     expect(popup.getElementById("site-rule-state")).toBeNull();
   });
