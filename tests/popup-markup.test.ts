@@ -24,6 +24,12 @@ describe("popup layout", () => {
     expect(popup.querySelector("#display-mode")).not.toBeNull();
     expect(popup.querySelector("#live-updates")).not.toBeNull();
     expect(popup.querySelector("#precision")).toBeNull();
+    const rows = [...popup.querySelectorAll(".preferences .setting-row")];
+    expect(rows.map((row) => row.getAttribute("for"))).toEqual([
+      "display-mode",
+      "maximum-odds",
+      "live-updates",
+    ]);
   });
 
   it("moves saved sites and the calculator into secondary views", () => {
