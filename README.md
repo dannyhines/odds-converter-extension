@@ -11,8 +11,9 @@ A Manifest V3 Chrome extension that converts American odds such as `-110` and `+
 probability. It watches live pages, so odds added or changed by sportsbooks and single-page apps are
 converted as they update.
 
-The extension is disabled by default after a fresh install. Open its toolbar popup to enable it
-globally or set a local override for the current site.
+The extension is disabled globally after a fresh install. Open its toolbar popup to turn conversion
+on for the current site. Live updates are enabled by default so dynamic sportsbook pages work as
+soon as conversion is turned on.
 
 > For more on implied probability and gambling odds, check out my [blog post](https://www.dannyhines.io/blog/betting-odds-extension).
 

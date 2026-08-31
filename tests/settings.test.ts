@@ -7,6 +7,11 @@ import {
 } from "../src/settings";
 
 describe("settings validation", () => {
+  it("starts opt-in globally with live updates enabled", () => {
+    expect(DEFAULT_SETTINGS.enabled).toBe(false);
+    expect(DEFAULT_SETTINGS.liveUpdates).toBe(true);
+  });
+
   it("uses safe defaults for corrupt storage", () => {
     expect(sanitizeSettings({ enabled: "yes", precision: 99, maximumOdds: 42 })).toEqual({
       ...DEFAULT_SETTINGS,

@@ -17,16 +17,25 @@ function renderPopup(): Document {
 }
 
 describe("popup layout", () => {
-  it("keeps the recognition limit collapsed while format and live updates stay visible", () => {
+  it("keeps all common settings visible in compact rows", () => {
     const popup = renderPopup();
-    const disclosure = popup.getElementById("advanced-settings") as HTMLDetailsElement;
-
-    expect(disclosure.open).toBe(false);
-    expect(disclosure.querySelector("summary")?.textContent).toContain("Advanced");
-    expect(disclosure.querySelector("#maximum-odds")).not.toBeNull();
+    expect(popup.querySelector("details")).toBeNull();
+    expect(popup.querySelector("#maximum-odds")).not.toBeNull();
     expect(popup.querySelector("#display-mode")).not.toBeNull();
     expect(popup.querySelector("#live-updates")).not.toBeNull();
     expect(popup.querySelector("#precision")).toBeNull();
+  });
+
+  it("moves saved sites and the calculator into secondary views", () => {
+    const popup = renderPopup();
+    expect((popup.getElementById("sites-view") as HTMLElement).hidden).toBe(true);
+    expect((popup.getElementById("calculator-view") as HTMLElement).hidden).toBe(true);
+    expect(popup.getElementById("sites-view-button")).not.toBeNull();
+    expect(popup.getElementById("site-rules-list")).not.toBeNull();
+    expect(popup.getElementById("calculator-view-button")).not.toBeNull();
+    expect(popup.querySelector("header p")).toBeNull();
+    expect(popup.getElementById("clear-site-rule")).toBeNull();
+    expect(popup.getElementById("site-rule-state")).toBeNull();
   });
 
   it("uses a shorter, vertically centered switch track", () => {
@@ -35,5 +44,20 @@ describe("popup layout", () => {
 
     expect(getComputedStyle(toggle).height).toBe("20px");
     expect(getComputedStyle(toggle).width).toBe("38px");
+  });
+
+  it("shows a pointer across the full current-site toggle row", () => {
+    const popup = renderPopup();
+    const row = popup.getElementById("site-enabled")!.closest("label")!;
+
+    expect(getComputedStyle(row).cursor).toBe("pointer");
+  });
+
+  it("keeps page status accessible without showing a status row", () => {
+    const popup = renderPopup();
+    const status = popup.getElementById("status")!;
+
+    expect(status.classList.contains("sr-only")).toBe(true);
+    expect(status.getAttribute("aria-live")).toBe("polite");
   });
 });

@@ -10,20 +10,21 @@ import { EngineStatus, ExtensionMessage, GlobalSettings, SiteRules } from "./typ
 
 const globalEnabled = byId<HTMLInputElement>("global-enabled");
 const siteEnabled = byId<HTMLInputElement>("site-enabled");
-const clearSiteRule = byId<HTMLButtonElement>("clear-site-rule");
-const siteRow = byId<HTMLElement>("site-row");
 const hostnameLabel = byId<HTMLElement>("hostname");
+const sitesCount = byId<HTMLElement>("sites-count");
+const siteRulesList = byId<HTMLElement>("site-rules-list");
+const emptySites = byId<HTMLElement>("empty-sites");
 const displayMode = byId<HTMLSelectElement>("display-mode");
 const liveUpdates = byId<HTMLInputElement>("live-updates");
 const maximumOdds = byId<HTMLSelectElement>("maximum-odds");
 const status = byId<HTMLElement>("status");
 const calculatorInput = byId<HTMLInputElement>("calculator-input");
 const calculatorOutput = byId<HTMLOutputElement>("calculator-output");
-const controls = [
-  ...document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLButtonElement>(
-    "main input, main select, main button",
-  ),
-];
+const settingsView = byId<HTMLElement>("settings-view");
+const sitesView = byId<HTMLElement>("sites-view");
+const calculatorView = byId<HTMLElement>("calculator-view");
+const sitesViewButton = byId<HTMLButtonElement>("sites-view-button");
+const calculatorViewButton = byId<HTMLButtonElement>("calculator-view-button");
 
 let settings: GlobalSettings;
 let siteRules: SiteRules = {};
@@ -61,13 +62,6 @@ siteEnabled.addEventListener("change", () => {
   saveSiteRules();
 });
 
-clearSiteRule.addEventListener("click", () => {
-  if (!hostname) return;
-  const { [hostname]: _removed, ...remaining } = siteRules;
-  siteRules = remaining;
-  saveSiteRules();
-});
-
 displayMode.addEventListener("change", () => {
   const selectedMode = displayMode.value;
   settings = {
@@ -91,6 +85,14 @@ maximumOdds.addEventListener("change", () => {
 });
 
 calculatorInput.addEventListener("input", updateCalculator);
+sitesViewButton.addEventListener("click", () => showView(sitesView));
+calculatorViewButton.addEventListener("click", () => {
+  showView(calculatorView);
+  calculatorInput.focus();
+});
+document.querySelectorAll<HTMLButtonElement>("[data-back]").forEach((button) => {
+  button.addEventListener("click", () => showView(settingsView));
+});
 
 function render(): void {
   globalEnabled.checked = settings.enabled;
@@ -100,10 +102,43 @@ function render(): void {
 
   const hasSiteRule = Object.prototype.hasOwnProperty.call(siteRules, hostname);
   siteEnabled.checked = hasSiteRule ? siteRules[hostname] : settings.enabled;
-  clearSiteRule.hidden = !hasSiteRule;
-  siteRow.hidden = !hostname;
+  siteEnabled.disabled = !hostname;
   hostnameLabel.textContent = hostname || "Unavailable on this page";
+  renderSiteRules();
   updateCalculator();
+}
+
+function renderSiteRules(): void {
+  const entries = Object.entries(siteRules).sort(([left], [right]) => left.localeCompare(right));
+  sitesCount.textContent = `${entries.length} saved →`;
+  emptySites.hidden = entries.length > 0;
+  siteRulesList.replaceChildren(
+    ...entries.map(([savedHostname, enabled]) => {
+      const label = document.createElement("label");
+      label.className = "site-list-row";
+
+      const name = document.createElement("span");
+      name.textContent = savedHostname;
+
+      const toggle = document.createElement("input");
+      toggle.type = "checkbox";
+      toggle.setAttribute("role", "switch");
+      toggle.checked = enabled;
+      toggle.addEventListener("change", () => {
+        siteRules = { ...siteRules, [savedHostname]: toggle.checked };
+        saveSiteRules();
+      });
+
+      label.append(name, toggle);
+      return label;
+    }),
+  );
+}
+
+function showView(view: HTMLElement): void {
+  settingsView.hidden = view !== settingsView;
+  sitesView.hidden = view !== sitesView;
+  calculatorView.hidden = view !== calculatorView;
 }
 
 function saveSettings(): void {
@@ -201,9 +236,12 @@ function setBusy(busy: boolean): void {
 }
 
 function setControlsDisabled(disabled: boolean): void {
-  controls.forEach((control) => {
+  document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLButtonElement>(
+    "input, select, button",
+  ).forEach((control) => {
     control.disabled = disabled;
   });
+  if (!disabled) siteEnabled.disabled = !hostname;
 }
 
 function byId<T extends HTMLElement>(id: string): T {
