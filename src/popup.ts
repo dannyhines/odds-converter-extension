@@ -14,7 +14,6 @@ const clearSiteRule = byId<HTMLButtonElement>("clear-site-rule");
 const siteRow = byId<HTMLElement>("site-row");
 const hostnameLabel = byId<HTMLElement>("hostname");
 const displayMode = byId<HTMLSelectElement>("display-mode");
-const precision = byId<HTMLSelectElement>("precision");
 const liveUpdates = byId<HTMLInputElement>("live-updates");
 const maximumOdds = byId<HTMLSelectElement>("maximum-odds");
 const status = byId<HTMLElement>("status");
@@ -81,11 +80,6 @@ displayMode.addEventListener("change", () => {
   saveSettings();
 });
 
-precision.addEventListener("change", () => {
-  settings = { ...settings, precision: Number(precision.value) };
-  saveSettings();
-});
-
 liveUpdates.addEventListener("change", () => {
   settings = { ...settings, liveUpdates: liveUpdates.checked };
   saveSettings();
@@ -101,7 +95,6 @@ calculatorInput.addEventListener("input", updateCalculator);
 function render(): void {
   globalEnabled.checked = settings.enabled;
   displayMode.value = settings.displayMode;
-  precision.value = String(settings.precision);
   liveUpdates.checked = settings.liveUpdates;
   maximumOdds.value = String(settings.maximumOdds);
 
@@ -194,7 +187,7 @@ function updateCalculator(): void {
     return;
   }
   const odds = match[1] === "+" ? magnitude : -magnitude;
-  calculatorOutput.value = `${(impliedProbability(odds) * 100).toFixed(settings.precision)}% implied probability`;
+  calculatorOutput.value = `${(impliedProbability(odds) * 100).toFixed(1)}% implied probability`;
 }
 
 function showStatus(message: string, tone: "active" | "muted" | "error"): void {

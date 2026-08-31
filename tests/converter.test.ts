@@ -43,14 +43,14 @@ describe("American odds conversion", () => {
     });
   });
 
-  it("supports compact append mode with configurable precision", () => {
-    const settings = { ...activeSettings, displayMode: "append-compact" as const, precision: 1 };
+  it("supports compact append mode with fixed one-decimal precision", () => {
+    const settings = { ...activeSettings, displayMode: "append-compact" as const };
     expect(convertText("Moneyline +140", settings).text).toBe("Moneyline +140 (41.7%)");
   });
 
-  it("supports replacement mode and configurable precision", () => {
-    const settings = { ...activeSettings, displayMode: "replace" as const, precision: 2 };
-    expect(convertText("Spread -110", settings).text).toBe("Spread 52.38%");
+  it("supports replacement mode with fixed one-decimal precision", () => {
+    const settings = { ...activeSettings, displayMode: "replace" as const };
+    expect(convertText("Spread -110", settings).text).toBe("Spread 52.4%");
   });
 
   it.each([
@@ -271,8 +271,8 @@ describe("live DOM controller", () => {
   it("rerenders from source when display settings change", () => {
     document.body.textContent = "Team +140";
     const controller = startController();
-    controller.updateSettings({ ...activeSettings, displayMode: "replace", precision: 2 });
-    expect(document.body.textContent).toBe("Team 41.67%");
+    controller.updateSettings({ ...activeSettings, displayMode: "replace" });
+    expect(document.body.textContent).toBe("Team 41.7%");
   });
 
   it("skips code, editable, textbox, and ignored regions", () => {

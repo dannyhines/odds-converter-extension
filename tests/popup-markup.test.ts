@@ -17,14 +17,16 @@ function renderPopup(): Document {
 }
 
 describe("popup layout", () => {
-  it("starts with appearance settings collapsed in an accessible disclosure", () => {
+  it("keeps the recognition limit collapsed while format and live updates stay visible", () => {
     const popup = renderPopup();
-    const disclosure = popup.getElementById("appearance-settings") as HTMLDetailsElement;
+    const disclosure = popup.getElementById("advanced-settings") as HTMLDetailsElement;
 
     expect(disclosure.open).toBe(false);
-    expect(disclosure.querySelector("summary")?.textContent).toContain("Appearance");
-    expect(disclosure.querySelector("#display-mode")).not.toBeNull();
-    expect(disclosure.querySelector("#precision")).not.toBeNull();
+    expect(disclosure.querySelector("summary")?.textContent).toContain("Advanced");
+    expect(disclosure.querySelector("#maximum-odds")).not.toBeNull();
+    expect(popup.querySelector("#display-mode")).not.toBeNull();
+    expect(popup.querySelector("#live-updates")).not.toBeNull();
+    expect(popup.querySelector("#precision")).toBeNull();
   });
 
   it("uses a shorter, vertically centered switch track", () => {

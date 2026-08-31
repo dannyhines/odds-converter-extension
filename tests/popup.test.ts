@@ -11,7 +11,6 @@ describe("popup initialization", () => {
         <select id="display-mode">
           <option value="append"></option><option value="append-compact"></option><option value="replace"></option>
         </select>
-        <select id="precision"><option value="1"></option></select>
         <input id="live-updates" type="checkbox">
         <select id="maximum-odds"><option value="10000"></option></select>
         <p id="status"></p><input id="calculator-input"><output id="calculator-output"></output>

@@ -47,7 +47,7 @@ export function convertText(source: string, settings: GlobalSettings): Conversio
     const signedOdds = sign === "+" ? magnitude : -magnitude;
     const percentage = formatPercentage(
       impliedProbability(signedOdds),
-      settings.displayMode === "append" ? 0 : settings.precision,
+      settings.displayMode === "append" ? 0 : 1,
     );
     const renderedStart = text.length;
     if (settings.displayMode === "replace") {

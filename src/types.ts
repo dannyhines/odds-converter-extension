@@ -3,7 +3,6 @@ export type DisplayMode = "append" | "append-compact" | "replace";
 export interface GlobalSettings {
   enabled: boolean;
   displayMode: DisplayMode;
-  precision: number;
   liveUpdates: boolean;
   maximumOdds: number;
 }

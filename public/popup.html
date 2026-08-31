@@ -29,35 +29,13 @@
         <p id="status" class="status" aria-live="polite">Checking this page…</p>
       </section>
 
-      <details id="appearance-settings" class="card appearance-card">
-        <summary>
-          <span><strong>Appearance</strong><small>Format and decimal precision</small></span>
-          <span class="summary-icon" aria-hidden="true"></span>
-        </summary>
-        <div class="settings-grid appearance-content">
-          <label>Format
-            <select id="display-mode">
-              <option value="append">+140 (42% implied)</option>
-              <option value="append-compact">+140 (41.7%)</option>
-              <option value="replace">41.7%</option>
-            </select>
-          </label>
-          <label>Decimal places
-            <select id="precision">
-              <option value="0">0</option><option value="1">1</option>
-              <option value="2">2</option><option value="3">3</option>
-            </select>
-          </label>
-        </div>
-      </details>
-
-      <section class="card settings-grid" aria-labelledby="behavior-heading">
-        <h2 id="behavior-heading">Behavior</h2>
-        <label>Largest odds to recognize
-          <select id="maximum-odds">
-            <option value="1000">±1,000 (strict)</option>
-            <option value="10000">±10,000 (balanced)</option>
-            <option value="100000">±100,000 (longshots)</option>
+      <section class="card settings-grid" aria-labelledby="display-heading">
+        <h2 id="display-heading">Display</h2>
+        <label>Format
+          <select id="display-mode">
+            <option value="append">+140 (42% implied)</option>
+            <option value="append-compact">+140 (41.7%)</option>
+            <option value="replace">41.7%</option>
           </select>
         </label>
         <label class="toggle-row compact">
@@ -65,6 +43,22 @@
           <input id="live-updates" type="checkbox" role="switch" />
         </label>
       </section>
+
+      <details id="advanced-settings" class="card disclosure-card">
+        <summary>
+          <span><strong>Advanced</strong><small>Recognition limits</small></span>
+          <span class="summary-icon" aria-hidden="true"></span>
+        </summary>
+        <div class="settings-grid disclosure-content">
+          <label>Largest odds to recognize
+            <select id="maximum-odds">
+              <option value="1000">±1,000 (strict)</option>
+              <option value="10000">±10,000 (balanced)</option>
+              <option value="100000">±100,000 (longshots)</option>
+            </select>
+          </label>
+        </div>
+      </details>
 
       <section class="card calculator" aria-labelledby="calculator-heading">
         <h2 id="calculator-heading">Quick calculator</h2>

@@ -10,7 +10,6 @@ describe("settings validation", () => {
   it("uses safe defaults for corrupt storage", () => {
     expect(sanitizeSettings({ enabled: "yes", precision: 99, maximumOdds: 42 })).toEqual({
       ...DEFAULT_SETTINGS,
-      precision: 3,
     });
   });
 
@@ -18,19 +17,18 @@ describe("settings validation", () => {
     expect(sanitizeSettings(undefined, true).enabled).toBe(true);
   });
 
-  it("clamps precision and accepts known options", () => {
+  it("accepts known options and ignores retired precision settings", () => {
     expect(
       sanitizeSettings({
         enabled: true,
         displayMode: "replace",
-        precision: -4,
+        precision: 3,
         liveUpdates: false,
         maximumOdds: 100000,
       }),
     ).toEqual({
       enabled: true,
       displayMode: "replace",
-      precision: 0,
       liveUpdates: false,
       maximumOdds: 100000,
     });
