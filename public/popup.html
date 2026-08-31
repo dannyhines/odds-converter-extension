@@ -29,21 +29,30 @@
         <p id="status" class="status" aria-live="polite">Checking this page…</p>
       </section>
 
-      <section class="card settings-grid" aria-labelledby="display-heading">
-        <h2 id="display-heading">Display</h2>
-        <label>Format
-          <select id="display-mode">
-            <option value="append">+140 (42% implied)</option>
-            <option value="append-compact">+140 (41.7%)</option>
-            <option value="replace">41.7%</option>
-          </select>
-        </label>
-        <label>Decimal places
-          <select id="precision">
-            <option value="0">0</option><option value="1">1</option>
-            <option value="2">2</option><option value="3">3</option>
-          </select>
-        </label>
+      <details id="appearance-settings" class="card appearance-card">
+        <summary>
+          <span><strong>Appearance</strong><small>Format and decimal precision</small></span>
+          <span class="summary-icon" aria-hidden="true"></span>
+        </summary>
+        <div class="settings-grid appearance-content">
+          <label>Format
+            <select id="display-mode">
+              <option value="append">+140 (42% implied)</option>
+              <option value="append-compact">+140 (41.7%)</option>
+              <option value="replace">41.7%</option>
+            </select>
+          </label>
+          <label>Decimal places
+            <select id="precision">
+              <option value="0">0</option><option value="1">1</option>
+              <option value="2">2</option><option value="3">3</option>
+            </select>
+          </label>
+        </div>
+      </details>
+
+      <section class="card settings-grid" aria-labelledby="behavior-heading">
+        <h2 id="behavior-heading">Behavior</h2>
         <label>Largest odds to recognize
           <select id="maximum-odds">
             <option value="1000">±1,000 (strict)</option>
