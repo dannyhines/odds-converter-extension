@@ -22,7 +22,10 @@ export function sanitizeSettings(value: unknown, legacyEnabled?: unknown): Globa
         : typeof legacyEnabled === "boolean"
           ? legacyEnabled
           : DEFAULT_SETTINGS.enabled,
-    displayMode: input.displayMode === "replace" ? "replace" : "append",
+    displayMode:
+      input.displayMode === "replace" || input.displayMode === "append-compact"
+        ? input.displayMode
+        : "append",
     precision:
       typeof input.precision === "number" && Number.isInteger(input.precision)
         ? clamp(input.precision, 0, 3)

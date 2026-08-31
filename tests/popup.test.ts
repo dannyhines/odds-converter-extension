@@ -8,7 +8,9 @@ describe("popup initialization", () => {
       <main>
         <input id="global-enabled" type="checkbox"><input id="site-enabled" type="checkbox">
         <button id="clear-site-rule"></button><div id="site-row"></div><span id="hostname"></span>
-        <select id="display-mode"><option value="append"></option><option value="replace"></option></select>
+        <select id="display-mode">
+          <option value="append"></option><option value="append-compact"></option><option value="replace"></option>
+        </select>
         <select id="precision"><option value="1"></option></select>
         <input id="live-updates" type="checkbox">
         <select id="maximum-odds"><option value="10000"></option></select>

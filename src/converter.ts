@@ -6,7 +6,7 @@ const EXCLUDED_TAGS = new Set([
 ]);
 
 const AMERICAN_ODDS = /(^|[\s\u00a0([{:;,/"'=<>])([+\-\u2212])(\d{3,6})(?!\d|[.,]\d|%|[-:/]\d|[\p{L}\p{M}_°])/gu;
-const GENERATED_SUFFIX = /^\s*\(\d{1,3}(?:\.\d{1,3})?% implied\)/;
+const GENERATED_SUFFIX = /^\s*\(\d{1,3}(?:\.\d{1,3})?%(?: implied)?\)/;
 
 export interface ConversionResult {
   text: string;
@@ -45,20 +45,24 @@ export function convertText(source: string, settings: GlobalSettings): Conversio
     text += source.slice(sourceCursor, oddsStart);
     const rawOdds = `${sign}${digits}`;
     const signedOdds = sign === "+" ? magnitude : -magnitude;
-    const percentage = formatPercentage(impliedProbability(signedOdds), settings.precision);
+    const percentage = formatPercentage(
+      impliedProbability(signedOdds),
+      settings.displayMode === "append" ? 0 : settings.precision,
+    );
     const renderedStart = text.length;
     if (settings.displayMode === "replace") {
       text += percentage;
       annotations.push({ sourceStart: oddsStart, sourceEnd: oddsEnd, renderedStart, renderedEnd: text.length });
     } else {
+      const suffix = ` (${percentage}${settings.displayMode === "append" ? " implied" : ""})`;
       text += rawOdds;
       annotations.push({
         sourceStart: oddsEnd,
         sourceEnd: oddsEnd,
         renderedStart: text.length,
-        renderedEnd: text.length + ` (${percentage} implied)`.length,
+        renderedEnd: text.length + suffix.length,
       });
-      text += ` (${percentage} implied)`;
+      text += suffix;
     }
     sourceCursor = oddsEnd;
     matchCount += 1;

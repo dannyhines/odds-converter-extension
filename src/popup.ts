@@ -70,7 +70,14 @@ clearSiteRule.addEventListener("click", () => {
 });
 
 displayMode.addEventListener("change", () => {
-  settings = { ...settings, displayMode: displayMode.value === "replace" ? "replace" : "append" };
+  const selectedMode = displayMode.value;
+  settings = {
+    ...settings,
+    displayMode:
+      selectedMode === "replace" || selectedMode === "append-compact"
+        ? selectedMode
+        : "append",
+  };
   saveSettings();
 });
 

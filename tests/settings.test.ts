@@ -36,6 +36,10 @@ describe("settings validation", () => {
     });
   });
 
+  it("accepts the compact append format", () => {
+    expect(sanitizeSettings({ displayMode: "append-compact" }).displayMode).toBe("append-compact");
+  });
+
   it("keeps valid local host rules and rejects malformed keys", () => {
     expect(
       sanitizeSiteRules({ "sports.example": true, "bad host": false, ".example": true }),

@@ -20,7 +20,8 @@ globally or set a local override for the current site.
 
 - Live `MutationObserver` updates without replacing DOM elements or parsing page text as HTML
 - Exact rollback when conversion is disabled
-- Append (`+140 (41.7% implied)`) and probability-only (`41.7%`) display modes
+- Rounded explanatory (`+140 (42% implied)`), compact (`+140 (41.7%)`), and probability-only
+  (`41.7%`) display modes
 - Zero to three decimal places and configurable longshot limits
 - Per-site on/off rules stored locally; global display preferences sync through Chrome
 - Open shadow-root and related-frame support
