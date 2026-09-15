@@ -24,7 +24,7 @@
     "url": "git+https://github.com/dannyhines/odds-converter-extension.git"
   },
   "author": "Danny Hines",
-  "license": "ISC",
+  "license": "MIT",
   "engines": {
     "node": ">=24.15.0"
   },
