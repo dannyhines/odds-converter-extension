@@ -1,12 +1,20 @@
 {
   "name": "odds-converter",
   "version": "4.0.0",
-  "description": "A live American-odds to implied-probability Chrome extension",
+  "description": "A live American-odds to implied-probability browser extension",
   "private": true,
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "webpack --config config/webpack.config.js",
-    "validate:build": "node scripts/validate-build.mjs",
+    "build": "npm run clean && npm run build:chrome && npm run build:edge && npm run build:firefox",
+    "build:chrome": "webpack --config config/webpack.config.js --env browser=chrome",
+    "build:edge": "webpack --config config/webpack.config.js --env browser=edge",
+    "build:firefox": "webpack --config config/webpack.config.js --env browser=firefox",
+    "validate:build": "npm run validate:chrome && npm run validate:edge && npm run validate:firefox",
+    "validate:chrome": "node scripts/validate-build.mjs chrome",
+    "validate:edge": "node scripts/validate-build.mjs edge",
+    "validate:firefox": "node scripts/validate-build.mjs firefox",
+    "package": "npm run build && npm run validate:build && node scripts/package-builds.mjs && npm run validate:packages",
+    "validate:packages": "node scripts/validate-packages.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check": "npm run typecheck && npm test && npm run build && npm run validate:build"
