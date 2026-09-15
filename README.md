@@ -66,7 +66,7 @@ for their respective stores. Firefox uses the same compiled JavaScript, HTML, CS
 generated Firefox manifest. Its manifest declares a background script instead of a Chromium service
 worker and includes a stable Gecko add-on ID for Mozilla signing.
 
-The Mozilla reviewer can reproduce the submitted Firefox ZIP from the source archive with:
+If you're a Mozilla reviewer, you can reproduce the submitted Firefox ZIP from the source archive with:
 
 ```sh
 npm ci
